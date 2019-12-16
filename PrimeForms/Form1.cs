@@ -12,17 +12,19 @@ namespace PrimeForms
 {
     public partial class Form1 : Form
     {
+        private DateTime dtStart, dtEnd;
         public Form1()
         {
             InitializeComponent();
         }
-        
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (backgroundWorker1.IsBusy != true)
             {
                 // Start the asynchronous operation.
                 backgroundWorker1.RunWorkerAsync();
+                dtStart = DateTime.Now;
             }
         }
 
@@ -31,32 +33,30 @@ namespace PrimeForms
             BackgroundWorker worker = sender as BackgroundWorker;
             int nPrimes = 0;
 
-            for (int i = 1; i <= 10; i++)
+            if (worker.CancellationPending == true)
             {
-                if (worker.CancellationPending == true)
+                e.Cancel = true;
+                return;
+            }
+            else
+            {
+                // Perform a time consuming operation and report progress.
+                for (int j = 3; j < 500000; j++)
                 {
-                    e.Cancel = true;
-                    break;
-                }
-                else
-                {
-                    // Perform a time consuming operation and report progress.
-                    for (int u = 3; u < 10000; u++)
+                    for (int z = 2; z < j / 2; z++)
                     {
-                        int z = 2;
-                        while (u % z != 0)
+                        if (j % z == 0)
                         {
-                            if (z == u - 1)
-                            {
-                                nPrimes++;
-                                break;
-                            }
-                            z++;
+                            break;
                         }
-                        worker.ReportProgress(u);
+                        else if (z == j - 1)
+                        {
+                            nPrimes++;
+                        }
                     }
-                    //label5.Text = nPrimes.ToString();
+                    worker.ReportProgress((j + 1) / 5000);
                 }
+                e.Result = nPrimes;
             }
         }
 
@@ -77,7 +77,9 @@ namespace PrimeForms
             }
             else
             {
-                label3.Text = "Done!";
+                dtEnd = DateTime.Now;
+                label5.Text = e.Result.ToString();
+                label3.Text = (dtEnd - dtStart).ToString();
             }
         }
     }
