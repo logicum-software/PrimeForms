@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace PrimeForms
@@ -31,7 +25,7 @@ namespace PrimeForms
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-            int nPrimes = 0;
+            int nPrimes = 2;
 
             if (worker.CancellationPending == true)
             {
@@ -41,20 +35,16 @@ namespace PrimeForms
             else
             {
                 // Perform a time consuming operation and report progress.
-                for (int j = 3; j < 500000; j++)
+                for (int j = 4; j <= 100000; j++)
                 {
-                    for (int z = 2; z < j / 2; z++)
+                    for (int z = 2; z <= j / 2; z++)
                     {
-                        if (j % z == 0)
-                        {
+                        if ((float) j % z == 0)
                             break;
-                        }
-                        else if (z == j - 1)
-                        {
+                        else if (z == j / 2)
                             nPrimes++;
-                        }
                     }
-                    worker.ReportProgress((j + 1) / 5000);
+                    worker.ReportProgress((j + 1) / 1000);
                 }
                 e.Result = nPrimes;
             }
