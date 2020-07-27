@@ -7,6 +7,7 @@ namespace PrimeForms
     public partial class Form1 : Form
     {
         private DateTime dtStart, dtEnd;
+        private int nPrimes;
         public Form1()
         {
             InitializeComponent();
@@ -25,7 +26,7 @@ namespace PrimeForms
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-            int nPrimes = 2;
+            nPrimes = 2;
 
             if (worker.CancellationPending == true)
             {
@@ -53,6 +54,9 @@ namespace PrimeForms
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             progressBar1.Value = e.ProgressPercentage;
+            label5.Text = nPrimes.ToString();
+            dtEnd = DateTime.Now;
+            label3.Text = (dtEnd - dtStart).ToString();
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
