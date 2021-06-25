@@ -11,8 +11,8 @@ namespace PrimeForms
     {
         private DateTime dtStart, dtEnd;
         private int nPrimes;
-        private static IEnumerable<int> dividents = Enumerable.Range(3, 1000000);
-        private static IEnumerable<int> divisors = Enumerable.Range(2, 500000);
+        private static IEnumerable<int> dividents = Enumerable.Range(3, 100000);
+        private static IEnumerable<int> divisors = Enumerable.Range(2, 50000);
         
         public Form1()
         {
@@ -43,7 +43,7 @@ namespace PrimeForms
             {
                 foreach (int current in dividents)
                 {
-                    worker.ReportProgress((current + 1) / 10000);
+                    worker.ReportProgress((current + 1) / 1000);
                     foreach (int divisor in divisors)
                     {
                         if (divisor <= current / 2)
