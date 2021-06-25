@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace PrimeForms
@@ -8,6 +11,9 @@ namespace PrimeForms
     {
         private DateTime dtStart, dtEnd;
         private int nPrimes;
+        private static IEnumerable<int> dividents = Enumerable.Range(3, 1000000);
+        private static IEnumerable<int> divisors = Enumerable.Range(2, 500000);
+        
         public Form1()
         {
             InitializeComponent();
@@ -26,7 +32,7 @@ namespace PrimeForms
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-            nPrimes = 2;
+            nPrimes = 1;
 
             if (worker.CancellationPending == true)
             {
@@ -35,17 +41,22 @@ namespace PrimeForms
             }
             else
             {
-                // Perform a time consuming operation and report progress.
-                for (int j = 4; j <= 100000; j++)
+                foreach (int current in dividents)
                 {
-                    for (int z = 2; z <= j / 2; z++)
+                    worker.ReportProgress((current + 1) / 10000);
+                    foreach (int divisor in divisors)
                     {
-                        if ((float) j % z == 0)
-                            break;
-                        else if (z == j / 2)
+                        if (divisor <= current / 2)
+                        {
+                            if ((float)current % divisor == 0)
+                                break;
+                        }
+                        else
+                        {
                             nPrimes++;
+                            break;
+                        }
                     }
-                    worker.ReportProgress((j + 1) / 1000);
                 }
                 e.Result = nPrimes;
             }
