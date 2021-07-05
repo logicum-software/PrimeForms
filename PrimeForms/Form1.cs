@@ -12,8 +12,8 @@ namespace PrimeForms
     {
         private DateTime dtStart, dtEnd;
         private int nPrimes;
-        private static IEnumerable<int> dividents = Enumerable.Range(3, 100000);
-        private static IEnumerable<int> divisors = Enumerable.Range(2, 50000);
+        private static IEnumerable<int> dividents = Enumerable.Range(3, 300000);
+        private static IEnumerable<int> divisors = Enumerable.Range(2, 150000);
 
         public Form1()
         {
@@ -48,7 +48,7 @@ namespace PrimeForms
                     e.Cancel = true;
                     return;
                 }
-                worker.ReportProgress((current + 1) / 1000);
+                worker.ReportProgress((current + 1) / 3000);
                 foreach (int divisor in divisors)
                 {
                     if (divisor <= current / 2)
@@ -86,6 +86,7 @@ namespace PrimeForms
             }
             else
             {
+                button1.Text = "Berechnung starten";
                 dtEnd = DateTime.Now;
                 label5.Text = e.Result.ToString();
                 label3.Text = (dtEnd - dtStart).ToString();
