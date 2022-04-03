@@ -11,13 +11,18 @@ namespace PrimeForms
     public partial class Form1 : Form
     {
         private DateTime dtStart, dtEnd;
-        private int nPrimes;
-        private static IEnumerable<int> dividents = Enumerable.Range(3, 100000);
-        private static IEnumerable<int> divisors = Enumerable.Range(2, 50000);
+        private int nPrimes, nPrimesSum;
+        private static IEnumerable<int> dividents;
+        private static IEnumerable<int> divisors;
+        private static ArrayList nPrimesPerHundretThousands = new ArrayList();
 
         public Form1()
         {
             InitializeComponent();
+            textBoxStart.Text = "3";
+            textBoxEnd.Text = "100000";
+            dividents = Enumerable.Range(int.Parse(textBoxStart.Text), int.Parse(textBoxEnd.Text));
+            divisors = Enumerable.Range(2, int.Parse(textBoxEnd.Text) / 2);
         }
 
         private void button1_ClickAsync(object sender, EventArgs e)
@@ -39,16 +44,34 @@ namespace PrimeForms
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
-            nPrimes = 1;
+            
+            if (int.Parse(textBoxStart.Text) < 3)
+            {
+                nPrimes = 1;
+                nPrimesSum = 1;
+            }
+            else
+            {
+                nPrimes = 0;
+                nPrimesSum = 0;
+            }
+
+            int iMax = int.Parse(textBoxEnd.Text) / 100;
 
             foreach (int current in dividents)
             {
+                if ((float) current % 100000 == 0)
+                {
+                    nPrimesPerHundretThousands.Add(nPrimes);
+                    nPrimes = 0;
+                }
+
                 if (worker.CancellationPending == true)
                 {
                     e.Cancel = true;
                     return;
                 }
-                worker.ReportProgress((current + 1) / 1000);
+                worker.ReportProgress((current + 1) / iMax);
                 foreach (int divisor in divisors)
                 {
                     if (divisor <= current / 2)
@@ -59,23 +82,35 @@ namespace PrimeForms
                     else
                     {
                         nPrimes++;
+                        nPrimesSum++;
                         break;
                     }
                 }
             }
-            e.Result = nPrimes;
+            e.Result = nPrimesSum;
         }
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             progressBar1.Value = e.ProgressPercentage;
-            label5.Text = nPrimes.ToString();
+            label5.Text = nPrimesSum.ToString();
             dtEnd = DateTime.Now;
             label3.Text = (dtEnd - dtStart).ToString();
         }
 
+        private void textBoxEnd_Leave(object sender, EventArgs e)
+        {
+            dividents = Enumerable.Range(int.Parse(textBoxStart.Text), int.Parse(textBoxEnd.Text));
+            divisors = Enumerable.Range(2, int.Parse(textBoxEnd.Text) / 2);
+        }
+
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            listBoxnPrimes.Items.Clear();
+
+            foreach (var item in nPrimesPerHundretThousands)
+                listBoxnPrimes.Items.Add(item.ToString());
+
             if (e.Cancelled == true)
             {
                 label3.Text = "Canceled!";
