@@ -34,6 +34,7 @@ namespace PrimeForms
             }
             else
             {
+                listBoxnPrimes.Items.Clear();
                 // Start the asynchronous operation.
                 backgroundWorker1.RunWorkerAsync();
                 dtStart = DateTime.Now;
